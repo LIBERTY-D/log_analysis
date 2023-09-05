@@ -21,6 +21,7 @@ def handleHtmlSql(logs):
             file.write(html)
     except Exception as e:
         print(e)
+    print(html)
 
 def handleHtmlText(logs):
     """
