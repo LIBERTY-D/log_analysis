@@ -1,0 +1,9 @@
+__pycache__/
+Logs/
+results.xml
+results.json
+results.csv
+results.html
+userdoc.html
+installation.html
+docs/
