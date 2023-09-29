@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>handleTextFile &mdash; source code documentation 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=8d563738"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            source code documentation
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">source code documentation</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">handleTextFile</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for handleTextFile</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">re</span><span class="c1">#Module which provides regular expression support</span>
+<span class="kn">import</span> <span class="nn">datetime</span><span class="c1">#Module which deals with data and time </span>
+<span class="kn">from</span> <span class="nn">colorama</span> <span class="kn">import</span> <span class="n">Fore</span> <span class="c1">#Module which allows to change color of the text on terminal</span>
+<span class="kn">import</span> <span class="nn">time</span><span class="c1">#Module which handles time related tasks</span>
+
+<span class="kn">from</span> <span class="nn">errors</span> <span class="kn">import</span> <span class="n">handleErrors</span><span class="c1">#handles errors</span>
+<span class="kn">from</span> <span class="nn">myXML</span> <span class="kn">import</span> <span class="n">handlesTxtXml</span><span class="p">,</span><span class="n">readXmlData</span><span class="c1"># xml read and write functionality</span>
+<span class="kn">from</span> <span class="nn">myJSON</span> <span class="kn">import</span> <span class="n">handleTxtJson</span><span class="p">,</span><span class="n">writeJsonFile</span><span class="c1">#returns json log for text file and writes logs to file</span>
+<span class="kn">from</span> <span class="nn">myHTML</span> <span class="kn">import</span> <span class="n">handleHtmlText</span><span class="c1"># Handles html output for the logs in the text file</span>
+<span class="kn">from</span> <span class="nn">myCSV</span>  <span class="kn">import</span> <span class="n">handleCSVText</span> <span class="c1"># Handles csv output for the logs in the text file</span>
+
+<span class="n">duplicateList</span> <span class="o">=</span><span class="p">[]</span> 
+<div class="viewcode-block" id="handleTextFile">
+<a class="viewcode-back" href="../handleTextFile.html#handleTextFile.handleTextFile">[docs]</a>
+<span class="k">def</span> <span class="nf">handleTextFile</span><span class="p">(</span><span class="n">logs</span><span class="p">,</span><span class="n">args</span><span class="p">):</span>
+<span class="w">     </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">     Searches through the text file for occurences of this information</span>
+<span class="sd">     &quot;&quot;&quot;</span>
+     <span class="c1"># regex for app 4,5 text files</span>
+     <span class="n">app45reg</span> <span class="o">=</span><span class="sa">r</span><span class="s1">&#39;^\[</span><span class="si">{1}</span><span class="s1">[0-9]*-[0-9]*-[0-9]*\s*[0-9]*[:][0-9]*:[0-9]*\.[0-9]*\]</span><span class="si">{1}</span><span class="s1">\s+.</span><span class="si">{38}</span><span class="s1">\s+\[[ERP XL|Executor|CORE]+\]*(.)*&#39;</span>
+     <span class="n">dates</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span>
+     <span class="n">Id</span> <span class="o">=</span>  <span class="s2">&quot; &quot;</span>
+     <span class="n">method</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span>
+     <span class="n">resultCode</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+     <span class="n">resultCode</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span> 
+     <span class="n">messageInfo</span> <span class="o">=</span><span class="s2">&quot; &quot;</span> 
+     <span class="n">time_</span><span class="o">=</span><span class="s2">&quot;&quot;</span>     
+     <span class="n">taskId</span> <span class="o">=</span><span class="p">[]</span>  <span class="c1">#stores unique ids</span>
+     
+     <span class="n">main</span><span class="o">=</span><span class="p">[]</span> <span class="c1">#   contains logs of fetched data</span>
+     <span class="k">global</span> <span class="n">duplicateList</span> 
+     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;====SEARCHING FOR DATA====&quot;</span><span class="p">)</span>
+     <span class="n">start</span><span class="o">=</span>  <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+     <span class="nb">print</span><span class="p">(</span><span class="n">Fore</span><span class="o">.</span><span class="n">GREEN</span><span class="o">+</span><span class="s2">&quot;started at@ &quot;</span><span class="p">,</span><span class="n">start</span><span class="p">)</span>
+     <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">2.4</span><span class="p">)</span><span class="c1">#app sleep for 2.4 seconds</span>
+
+     <span class="n">data</span> <span class="o">=</span> <span class="n">regex</span><span class="p">(</span><span class="n">app45reg</span><span class="p">,</span><span class="n">logs</span><span class="p">)</span><span class="c1">#loop through the regex pattern</span>
+     <span class="k">if</span> <span class="n">data</span><span class="p">:</span><span class="c1">#check for app4 and app5</span>
+          <span class="n">taskId</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;TaskId\s*=\s*\d*&#39;</span><span class="p">,</span><span class="n">data</span><span class="p">)</span>
+          <span class="n">taskId</span><span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">taskId</span><span class="p">))</span><span class="c1">#unique id</span>
+         
+          <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="nb">id</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">taskId</span><span class="p">):</span>
+                    <span class="nb">id</span><span class="o">=</span> <span class="nb">id</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;TaskId = &quot;</span><span class="p">,</span><span class="s2">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="n">taskId</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">id</span>
+          <span class="n">result</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+          <span class="k">for</span> <span class="n">resindex</span>  <span class="ow">in</span>  <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)):</span>
+               <span class="n">groups</span> <span class="o">=</span>  <span class="n">result</span><span class="p">[</span><span class="n">resindex</span><span class="p">]</span>
+               <span class="n">Id</span><span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;TaskId\s*=\s*\d*&#39;</span><span class="p">,</span><span class="n">groups</span><span class="p">)</span><span class="c1"># if theres an id it means we dealing with task which has ids</span>
+               <span class="k">if</span>   <span class="n">Id</span><span class="p">:</span>
+                    <span class="n">Id</span> <span class="o">=</span>  <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">Id</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="n">dates</span> <span class="o">=</span>  <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[0-9]*-[0-9]*-[0-9]*\s*[0-9]*[:][0-9]*:[0-9]*\.[0-9]*&#39;</span><span class="p">,</span><span class="n">groups</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">dates</span><span class="p">:</span>
+                         <span class="n">dateTime</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dates</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+                         <span class="n">dates</span> <span class="o">=</span><span class="n">dateTime</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                         <span class="n">time_</span> <span class="o">=</span><span class="n">dateTime</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">method</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Method\s*=\s*\w*&#39;</span><span class="p">,</span><span class="n">groups</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">method</span><span class="p">:</span>
+                         <span class="n">method</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">method</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="n">resultCode</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;ResultCode\s*=\s*\w*&#39;</span><span class="p">,</span><span class="n">groups</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">resultCode</span><span class="p">:</span>
+                         <span class="n">resultCode</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">resultCode</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="n">system</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;ERP XL|Executor|CORE]+&#39;</span><span class="p">,</span><span class="n">groups</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">system</span><span class="p">:</span>
+                         <span class="n">system</span> <span class="o">=</span>  <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">system</span><span class="p">)</span>
+                    <span class="n">messageInfo</span>  <span class="o">=</span>  <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\[[ERP XL|Executor|CORE]+\]\s*&quot;</span><span class="p">,</span><span class="n">groups</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">messageInfo</span><span class="p">:</span>
+                         <span class="n">messageInfo</span> <span class="o">=</span>  <span class="n">groups</span><span class="p">[</span><span class="n">messageInfo</span><span class="o">.</span><span class="n">end</span><span class="p">():]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                         
+                    <span class="k">if</span> <span class="n">resultCode</span> <span class="o">==</span> <span class="s2">&quot;FinishedOk&quot;</span><span class="p">:</span><span class="c1">#append a dictionary with success resultcode</span>
+                         <span class="n">main</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                              <span class="s2">&quot;TaskId&quot;</span><span class="p">:</span><span class="n">Id</span><span class="p">,</span>
+                                        <span class="s2">&quot;finished-date-task&quot;</span><span class="p">:</span><span class="n">dates</span><span class="p">,</span>
+                                          <span class="s2">&quot;finish-task-time&quot;</span><span class="p">:</span><span class="n">time_</span><span class="p">,</span>
+                                             <span class="s2">&quot;System&quot;</span><span class="p">:</span><span class="n">system</span><span class="p">,</span>
+                                        <span class="s2">&quot;resultCode&quot;</span><span class="p">:</span><span class="n">resultCode</span><span class="p">,</span>
+                                        <span class="s2">&quot;message-end&quot;</span><span class="p">:</span><span class="n">messageInfo</span>
+                                        <span class="p">})</span>
+                    <span class="n">m</span><span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Method = &quot;</span><span class="p">,</span><span class="n">groups</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">m</span><span class="p">:</span>
+                         <span class="c1">#append  to a dictionary </span>
+                         <span class="n">main</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                                   <span class="s2">&quot;TaskId&quot;</span><span class="p">:</span><span class="n">Id</span><span class="p">,</span>
+                                             <span class="s2">&quot;start-date-task&quot;</span><span class="p">:</span><span class="n">dates</span><span class="p">,</span>
+                                             <span class="s2">&quot;start-task-time&quot;</span><span class="p">:</span><span class="n">time_</span><span class="p">,</span>
+                                             <span class="s2">&quot;System&quot;</span><span class="p">:</span><span class="n">system</span><span class="p">,</span>
+                                             <span class="s2">&quot;method&quot;</span><span class="p">:</span><span class="n">method</span><span class="p">,</span>
+                                             <span class="s2">&quot;message-start&quot;</span><span class="p">:</span><span class="n">messageInfo</span><span class="p">,</span>
+                                             <span class="p">})</span>
+               
+               <span class="k">else</span><span class="p">:</span><span class="c1">#when no tasklist id</span>
+                    <span class="n">dates</span> <span class="o">=</span>  <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[0-9]*-[0-9]*-[0-9]*\s*[0-9]*[:][0-9]*:[0-9]*\.[0-9]&#39;</span><span class="p">,</span><span class="n">groups</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">dates</span><span class="p">:</span>
+                         <span class="n">dateTime</span><span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dates</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+                         <span class="n">dates</span><span class="o">=</span> <span class="n">dateTime</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                         <span class="n">time_</span><span class="o">=</span> <span class="n">dateTime</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">system</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;ERP XL|Executor|CORE]+&#39;</span><span class="p">,</span><span class="n">groups</span><span class="p">)</span>
+               
+                    <span class="k">if</span> <span class="n">system</span><span class="p">:</span>
+                         <span class="n">system</span> <span class="o">=</span>  <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">system</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;]&quot;</span><span class="p">)</span>
+                    <span class="n">messageInfo</span>  <span class="o">=</span>  <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\[[ERP XL|Executor|CORE]+\]\s*&quot;</span><span class="p">,</span><span class="n">groups</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">messageInfo</span><span class="p">:</span>
+                         <span class="n">messageInfo</span> <span class="o">=</span> <span class="n">groups</span><span class="p">[</span><span class="n">messageInfo</span><span class="o">.</span><span class="n">end</span><span class="p">():]</span>
+                    
+                         <span class="n">main</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;start-date-task&quot;</span><span class="p">:</span><span class="n">dates</span><span class="p">,</span>
+                                 <span class="s2">&quot;start-task-time&quot;</span><span class="p">:</span><span class="n">time_</span><span class="p">,</span>
+                                 <span class="s2">&quot;System&quot;</span><span class="p">:</span><span class="n">system</span><span class="p">,</span>
+                                 <span class="s2">&quot;message-start&quot;</span><span class="p">:</span><span class="n">messageInfo</span><span class="p">,</span>
+                                        <span class="p">})</span>
+                    
+     <span class="k">else</span><span class="p">:</span><span class="c1">#matches app12367</span>
+          <span class="k">if</span> <span class="n">data</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+               <span class="n">sentencePat</span> <span class="o">=</span><span class="sa">r</span><span class="s2">&quot;([0-9]</span><span class="si">{4}</span><span class="s2">-[0-9]</span><span class="si">{2}</span><span class="s2">-[0-9]</span><span class="si">{2}</span><span class="s2">\s[0-9]</span><span class="si">{2}</span><span class="s2">:[0-9]</span><span class="si">{2}</span><span class="s2">:[0-9]</span><span class="si">{2}</span><span class="s2">\.[0-9]{3,4}[\|Error\||\|Info\||\|Warn\|]+.*)&quot;</span><span class="c1">#search pattern</span>
+               <span class="n">matcher</span> <span class="o">=</span>  <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">sentencePat</span><span class="p">,</span><span class="n">logs</span><span class="p">)</span>
+               <span class="k">if</span> <span class="n">matcher</span><span class="p">:</span><span class="c1">#app 134567 text files</span>
+                    <span class="n">matcher</span>  <span class="o">=</span>  <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">sentencePat</span><span class="p">,</span><span class="n">logs</span><span class="p">)</span>
+                    <span class="n">matcher</span> <span class="o">=</span>  <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">removeEmptyLine</span><span class="p">,</span><span class="n">matcher</span><span class="p">))</span>
+                    <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">matcher</span><span class="p">:</span>
+                         <span class="n">splittedMatch</span> <span class="o">=</span>   <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(\|Error\||\|Info\||\|Warn\|)&quot;</span><span class="p">,</span><span class="n">match</span><span class="p">,</span><span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)</span>
+                         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">splittedMatch</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span> <span class="ow">and</span> <span class="p">(</span><span class="n">splittedMatch</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="ow">or</span> <span class="n">splittedMatch</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> &quot;</span><span class="p">)</span> <span class="p">:</span><span class="c1">#do nothing if list contains this</span>
+                              <span class="k">pass</span>
+                         <span class="k">else</span><span class="p">:</span>
+                              <span class="n">date</span> <span class="o">=</span><span class="s2">&quot;&quot;</span>
+                              <span class="n">level</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+                              <span class="n">message</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+                              <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">splittedMatch</span><span class="p">)</span><span class="o">==</span><span class="mi">3</span><span class="p">:</span>
+                                   <span class="n">dateTime</span> <span class="o">=</span> <span class="n">splittedMatch</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+                                   <span class="n">date</span> <span class="o">=</span> <span class="n">dateTime</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                                   <span class="n">time_</span><span class="o">=</span> <span class="n">dateTime</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                                   <span class="n">level</span> <span class="o">=</span> <span class="n">splittedMatch</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="p">)</span>
+                                   <span class="n">message</span> <span class="o">=</span>  <span class="n">splittedMatch</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="p">)</span>
+                                   <span class="n">main</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                                        <span class="s2">&quot;date&quot;</span><span class="p">:</span><span class="n">date</span><span class="p">,</span>
+                                         <span class="s2">&quot;time&quot;</span><span class="p">:</span><span class="n">time_</span><span class="p">,</span>
+                                        <span class="s2">&quot;level&quot;</span><span class="p">:</span><span class="n">level</span><span class="p">,</span>
+                                        <span class="s2">&quot;message&quot;</span><span class="p">:</span><span class="n">message</span>
+                                   <span class="p">})</span>
+                              <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">splittedMatch</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+                                   <span class="n">lastItemAdded</span> <span class="o">=</span> <span class="n">main</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">main</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                                   <span class="n">lastItemAdded</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+                                        <span class="s2">&quot;message&quot;</span><span class="p">:</span><span class="n">lastItemAdded</span><span class="p">[</span><span class="s2">&quot;message&quot;</span><span class="p">]</span><span class="o">+</span><span class="n">splittedMatch</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                                   <span class="p">})</span>
+               <span class="k">else</span><span class="p">:</span>
+                    <span class="n">sentencePat</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;([0-9]*.[0-9]*.[0-9]*\s*[0-9]*:[0-9]*:[0-9]*)\s+(\[.*\])\s(.*)&quot;</span><span class="c1">#search pattern which matches text files in app2</span>
+                    <span class="n">matcher</span> <span class="o">=</span> <span class="n">logs</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">matcher</span><span class="p">:</span>
+                         <span class="n">matched</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="n">sentencePat</span><span class="p">,</span><span class="n">match</span><span class="p">)</span>
+                         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span>  <span class="nb">enumerate</span><span class="p">(</span><span class="n">matched</span><span class="p">):</span>
+                              <span class="n">dateTime</span><span class="o">=</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+                              <span class="n">date</span> <span class="o">=</span><span class="n">dateTime</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                              <span class="n">time_</span><span class="o">=</span> <span class="n">dateTime</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                              <span class="nb">id</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+                              <span class="n">message</span><span class="o">=</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+                              <span class="n">main</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                                        <span class="s2">&quot;date&quot;</span><span class="p">:</span><span class="n">date</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
+                                         <span class="s2">&quot;time&quot;</span><span class="p">:</span><span class="n">time_</span><span class="p">,</span>
+                                        <span class="s2">&quot;id&quot;</span><span class="p">:</span><span class="nb">id</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;]&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">),</span>
+                                        <span class="s2">&quot;message&quot;</span><span class="p">:</span><span class="n">message</span><span class="p">,</span>
+                                        
+                              <span class="p">})</span>
+                                   
+     <span class="k">for</span> <span class="n">logIndex</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">main</span><span class="p">)):</span><span class="c1">#loop through main list</span>
+          <span class="n">getLog</span> <span class="o">=</span> <span class="n">main</span><span class="p">[</span><span class="n">logIndex</span><span class="p">]</span><span class="c1">#get items</span>
+          <span class="k">for</span> <span class="n">index</span>  <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">logIndex</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">main</span><span class="p">)):</span><span class="c1">#loop which is one step ahead for comparison</span>
+               <span class="n">anLog</span> <span class="o">=</span> <span class="n">main</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+               <span class="k">if</span> <span class="s2">&quot;TaskId&quot;</span> <span class="ow">in</span> <span class="n">getLog</span> <span class="ow">and</span> <span class="s2">&quot;TaskId&quot;</span> <span class="ow">in</span> <span class="n">anLog</span><span class="p">:</span><span class="c1">#check if the item contains a TaskId</span>
+                    
+                    <span class="k">if</span> <span class="n">getLog</span><span class="p">[</span><span class="s2">&quot;TaskId&quot;</span><span class="p">]</span><span class="o">==</span><span class="n">anLog</span><span class="p">[</span><span class="s2">&quot;TaskId&quot;</span><span class="p">]:</span><span class="c1">#if id are the same then merge</span>
+
+                         <span class="n">getLog</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">anLog</span><span class="p">)</span><span class="c1">#update  getLog </span>
+                         <span class="n">duplicateList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">index</span><span class="p">)</span><span class="c1"># add unwanted index for removal with the filter function</span>
+     <span class="k">try</span><span class="p">:</span>
+          <span class="n">workable</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">remove</span><span class="p">,</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">main</span><span class="p">)))</span> 
+          <span class="c1"># workable.pop(len(workable)-1)#remove last item which always appesrs to be empty</span>
+          <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">output</span> <span class="o">==</span> <span class="s2">&quot;json&quot;</span><span class="p">:</span>
+               <span class="n">jsonObject</span> <span class="o">=</span> <span class="n">handleTxtJson</span><span class="p">(</span><span class="n">workable</span><span class="p">)</span><span class="c1">#function which return  json data</span>
+               <span class="nb">print</span><span class="p">(</span><span class="n">Fore</span><span class="o">.</span><span class="n">BLUE</span><span class="o">+</span><span class="n">jsonObject</span><span class="p">)</span>
+               <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">2.4</span><span class="p">)</span>
+               <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;WRITING TO FILE.........&quot;</span><span class="p">)</span>
+               <span class="n">writeJsonFile</span><span class="p">(</span><span class="s2">&quot;results.json&quot;</span><span class="p">,</span><span class="n">jsonObject</span><span class="p">)</span>
+               <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;DONE....&quot;</span><span class="p">)</span>
+          <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">output</span><span class="o">==</span><span class="s2">&quot;xml&quot;</span><span class="p">:</span>
+               <span class="n">handlesTxtXml</span><span class="p">(</span><span class="n">workable</span><span class="p">)</span><span class="c1">#write logs to xml file function</span>
+               <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">workable</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+                    <span class="n">readXmlData</span><span class="p">(</span><span class="s2">&quot;results.xml&quot;</span><span class="p">)</span><span class="c1">#read xml data produced</span>
+          <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">output</span><span class="o">==</span><span class="s2">&quot;html&quot;</span><span class="p">:</span>
+               <span class="n">handleHtmlText</span><span class="p">(</span><span class="n">workable</span><span class="p">)</span>
+          <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">output</span><span class="o">==</span><span class="s2">&quot;csv&quot;</span><span class="p">:</span>
+               <span class="n">handleCSVText</span><span class="p">(</span><span class="n">workable</span><span class="p">)</span>
+     <span class="k">except</span> <span class="ne">Exception</span>  <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+          <span class="n">handleErrors</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+     <span class="n">duplicateList</span> <span class="o">=</span><span class="p">[]</span>
+     <span class="n">taskId</span><span class="o">=</span><span class="p">[]</span> 
+     <span class="n">main</span><span class="o">=</span><span class="p">[]</span>           
+     <span class="n">end</span> <span class="o">=</span>  <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">-</span><span class="n">start</span>
+     <span class="nb">print</span><span class="p">(</span><span class="n">Fore</span><span class="o">.</span><span class="n">GREEN</span><span class="o">+</span><span class="s2">&quot;Time taken is :&quot;</span><span class="p">,</span><span class="n">end</span><span class="p">)</span>
+     <span class="nb">print</span><span class="p">(</span><span class="n">Fore</span><span class="o">.</span><span class="n">WHITE</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="regex">
+<a class="viewcode-back" href="../handleTextFile.html#handleTextFile.regex">[docs]</a>
+<span class="k">def</span> <span class="nf">regex</span><span class="p">(</span><span class="n">regp</span><span class="p">,</span><span class="n">logs</span><span class="p">):</span>
+<span class="w">     </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">     regex function which returns matched data </span>
+<span class="sd">     &quot;&quot;&quot;</span>
+     <span class="n">data</span> <span class="o">=</span><span class="s2">&quot;&quot;</span>
+     <span class="k">if</span> <span class="n">logs</span><span class="p">:</span>
+          <span class="n">matcher</span> <span class="o">=</span>  <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">regp</span><span class="p">,</span><span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)</span>
+          <span class="n">matched</span> <span class="o">=</span> <span class="n">matcher</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="n">logs</span><span class="p">)</span>
+          <span class="k">if</span> <span class="n">matched</span><span class="p">:</span>
+               <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">matched</span><span class="p">):</span>
+                    <span class="n">start</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">span</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">end</span> <span class="o">=</span>  <span class="n">item</span><span class="o">.</span><span class="n">span</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">data</span> <span class="o">=</span><span class="n">logs</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span>
+               <span class="k">return</span> <span class="n">data</span></div>
+
+         
+<div class="viewcode-block" id="remove">
+<a class="viewcode-back" href="../handleTextFile.html#handleTextFile.remove">[docs]</a>
+<span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="n">index_item</span><span class="p">):</span>
+<span class="w">     </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">     return item not in duplicate list</span>
+<span class="sd">     &quot;&quot;&quot;</span>
+     <span class="n">index</span><span class="p">,</span><span class="n">item</span> <span class="o">=</span> <span class="n">index_item</span>
+     <span class="k">if</span> <span class="n">index</span> <span class="ow">not</span> <span class="ow">in</span>  <span class="n">duplicateList</span><span class="p">:</span>
+          <span class="k">return</span> <span class="n">index_item</span></div>
+
+<div class="viewcode-block" id="removeEmptyLine">
+<a class="viewcode-back" href="../handleTextFile.html#handleTextFile.removeEmptyLine">[docs]</a>
+<span class="k">def</span> <span class="nf">removeEmptyLine</span><span class="p">(</span><span class="n">log</span><span class="p">):</span>
+<span class="w">     </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">     Return Items which are not a new line</span>
+<span class="sd">     &quot;&quot;&quot;</span>
+     <span class="k">if</span> <span class="n">log</span> <span class="o">!=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1"> &#39;</span> <span class="ow">or</span> <span class="n">log</span> <span class="o">!=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">:</span>
+          <span class="k">return</span> <span class="n">log</span></div>
+
+     
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Liberty Mukubvu.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

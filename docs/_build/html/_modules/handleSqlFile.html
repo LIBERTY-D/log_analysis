@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>handleSqlFile &mdash; source code documentation 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=8d563738"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            source code documentation
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">source code documentation</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">handleSqlFile</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for handleSqlFile</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">time</span><span class="c1">#Module which handles time related tasks</span>
+<span class="kn">import</span> <span class="nn">datetime</span><span class="c1">#Module which deals with data and time </span>
+<span class="kn">from</span> <span class="nn">colorama</span> <span class="kn">import</span> <span class="n">Fore</span><span class="c1">#Module which allows to change color of the text on terminal</span>
+<span class="kn">import</span> <span class="nn">re</span> <span class="c1">#Module which provides regular expression support</span>
+
+
+
+<span class="kn">from</span> <span class="nn">myXML</span> <span class="kn">import</span> <span class="n">handleSqlXml</span><span class="p">,</span><span class="n">readXmlData</span><span class="c1">#write logs to xml file and read xml written</span>
+<span class="kn">from</span> <span class="nn">myJSON</span> <span class="kn">import</span> <span class="n">handleSqlJson</span><span class="p">,</span><span class="n">writeJsonFile</span><span class="c1">#returns json log for sql file and writes logs to file</span>
+<span class="kn">from</span> <span class="nn">myHTML</span> <span class="kn">import</span> <span class="n">handleHtmlSql</span> <span class="c1">#handles html output for logs in sql file</span>
+<span class="kn">from</span> <span class="nn">myCSV</span> <span class="kn">import</span> <span class="n">handleCSVSql</span><span class="c1"># Handles csv output for the logs in the sql file</span>
+
+<div class="viewcode-block" id="handleSqlFile">
+<a class="viewcode-back" href="../handleSqlFile.html#handleSqlFile.handleSqlFile">[docs]</a>
+<span class="k">def</span> <span class="nf">handleSqlFile</span><span class="p">(</span><span class="n">args</span><span class="p">,</span><span class="n">logs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    handles sql file</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">myLogs</span><span class="o">=</span><span class="p">[]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;====SEARCHING FOR DATA====&quot;</span><span class="p">)</span>
+    <span class="n">start</span><span class="o">=</span>  <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">Fore</span><span class="o">.</span><span class="n">GREEN</span><span class="o">+</span><span class="s2">&quot;started at@ &quot;</span><span class="p">,</span><span class="n">start</span><span class="p">)</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">2.4</span><span class="p">)</span><span class="c1">#app sleep for 2.4 seconds</span>
+    <span class="n">data</span> <span class="o">=</span>  <span class="n">logs</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="c1"># print(data)</span>
+    <span class="n">pattern</span> <span class="o">=</span><span class="sa">r</span><span class="s2">&quot;INSERT \[dbo\]\.\[Logger\] \(\[Id\], \[MachineName\], \[UserName\], \[Date\], \[Level\], \[Logger\], \[Callsite\], \[Message\], \[Exception\]\)\s+VALUES\s+(\(.*\))&quot;</span>
+    <span class="n">found</span> <span class="o">=</span>  <span class="n">re</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span><span class="n">data</span><span class="p">,</span><span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">found</span><span class="p">:</span><span class="c1">#checks if something is found or atleast is not None</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span><span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">found</span><span class="p">):</span>
+            <span class="n">information</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">group</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;INSERT [dbo].[Logger] ([Id], [MachineName], [UserName], [Date], [Level], [Logger], [Callsite], [Message], [Exception])&quot;</span><span class="p">)</span><span class="c1">#return an array so that i extract values</span>
+            <span class="k">for</span> <span class="n">_</span><span class="p">,</span><span class="n">info</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">information</span><span class="p">):</span>
+                
+                <span class="k">if</span> <span class="n">info</span><span class="o">==</span><span class="s2">&quot;&quot;</span><span class="p">:</span><span class="c1">#if infor is an empty string</span>
+                    <span class="k">pass</span><span class="c1">#do nothing</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">content</span> <span class="o">=</span> <span class="n">info</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;VALUES&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;(&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;N&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;CAST&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; AS DateTime)&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;)&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="c1">#chaining to replace unwanted characters with empty space then strip to remove white space</span>
+                    <span class="n">content</span> <span class="o">=</span>  <span class="nb">tuple</span><span class="p">(</span><span class="n">content</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">))</span><span class="c1">#returns  a list with content needed in mylogs</span>
+                    <span class="c1"># print(&quot;printed&quot;,content)</span>
+                    <span class="n">sqlDb</span><span class="o">=</span><span class="p">(</span>
+                    <span class="s2">&quot;Id&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;MachineName&quot;</span><span class="p">,</span>
+                     <span class="s2">&quot;Username&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;Date&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;Level&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;Logger&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;Callsite&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;Message&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;Exception&quot;</span><span class="p">,</span>
+                        <span class="p">)</span>
+                    <span class="n">mydata</span> <span class="o">=</span>  <span class="nb">list</span><span class="p">((</span><span class="nb">zip</span><span class="p">(</span><span class="n">sqlDb</span><span class="p">,</span><span class="n">content</span><span class="p">)))</span>
+                    <span class="n">init</span> <span class="o">=</span><span class="p">{</span>
+
+                    <span class="p">}</span>
+                    <span class="k">for</span> <span class="n">myd</span> <span class="ow">in</span> <span class="n">mydata</span><span class="p">:</span>
+                        <span class="n">key</span> <span class="o">=</span><span class="n">myd</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="c1">#key for the tuple</span>
+                        <span class="n">value</span><span class="o">=</span><span class="n">myd</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="c1">#value for the tuple</span>
+                        <span class="n">init</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">=</span><span class="n">value</span>
+                    <span class="n">myLogs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">init</span><span class="p">)</span><span class="c1">#put the dictionary in a list</span>
+                    <span class="n">init</span> <span class="o">=</span><span class="p">{}</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">output</span><span class="o">==</span><span class="s2">&quot;json&quot;</span><span class="p">:</span>
+        <span class="n">jsonlogs</span> <span class="o">=</span><span class="n">handleSqlJson</span><span class="p">(</span><span class="n">myLogs</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">Fore</span><span class="o">.</span><span class="n">BLUE</span><span class="p">,</span><span class="n">jsonlogs</span><span class="p">)</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">2.4</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;WRITING TO FILE.........&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;DONE....&quot;</span><span class="p">)</span>
+        <span class="n">writeJsonFile</span><span class="p">(</span><span class="s2">&quot;results.json&quot;</span><span class="p">,</span><span class="n">jsonlogs</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">output</span><span class="o">==</span><span class="s2">&quot;xml&quot;</span><span class="p">:</span>
+        <span class="n">handleSqlXml</span><span class="p">(</span><span class="n">myLogs</span><span class="p">)</span>
+        <span class="n">readXmlData</span><span class="p">(</span><span class="s2">&quot;results.xml&quot;</span><span class="p">)</span> 
+    <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">output</span><span class="o">==</span><span class="s2">&quot;html&quot;</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">Fore</span><span class="o">.</span><span class="n">BLUE</span><span class="p">,</span><span class="s2">&quot;WRITING TO HTML FILE(results.html)...&quot;</span><span class="p">)</span>
+        <span class="n">handleHtmlSql</span><span class="p">(</span><span class="n">myLogs</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">Fore</span><span class="o">.</span><span class="n">BLUE</span><span class="p">,</span><span class="s2">&quot;DONE..(CHECK results.html)&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">output</span> <span class="o">==</span><span class="s2">&quot;csv&quot;</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">Fore</span><span class="o">.</span><span class="n">BLUE</span><span class="p">,</span><span class="s2">&quot;WRITING TO CSV FILE(results.csv)...&quot;</span><span class="p">)</span>
+        <span class="n">handleCSVSql</span><span class="p">(</span><span class="n">myLogs</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">Fore</span><span class="o">.</span><span class="n">BLUE</span><span class="p">,</span><span class="s2">&quot;DONE..(CHECK results.csv)&quot;</span><span class="p">)</span>
+    <span class="n">end</span> <span class="o">=</span>  <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">-</span><span class="n">start</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">Fore</span><span class="o">.</span><span class="n">GREEN</span><span class="o">+</span><span class="s2">&quot;Time taken is :&quot;</span><span class="p">,</span><span class="n">end</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">Fore</span><span class="o">.</span><span class="n">WHITE</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Liberty Mukubvu.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
