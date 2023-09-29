@@ -109,6 +109,7 @@
       <h3>Understanding Command Line Arguments</h3>
       <p>Command line arguments allow you to customize the tool's behavior:</p>
       <ul>
+        <li><code>-h</code> or <code>--help</code>: For help of command line arguments and descriptions.</li>
         <li><code>-f</code> or <code>--file</code>: Specify the path to the log file or URL (required).</li>
         <li><code>-sl</code> or <code>--startline</code>: Start reading from a specific line number.</li>
         <li><code>-el</code> or <code>--endline</code>: End reading at a designated line number.</li>
@@ -125,6 +126,12 @@
       <h2>Usage</h2>
       <p>The Log Analysis Tool provides a flexible command-line interface for analyzing log files. Here's how you can use the tool:</p>
       <h3>Basic Usage</h3>
+      <p>For help on command line arguments</p>
+       <pre>
+        <code>
+          python main.py -h
+        </code>
+      </pre>
       <pre>
         <code>
           python main.py -f /path/to/log/file.txt -a
