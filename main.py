@@ -1,6 +1,7 @@
 import argparse#Module which  Allows to enter command line arhuments
 import xml.etree.ElementTree as ET #Module  which Allows manupulation of xml related function
 import lxml.etree as lxml #Module  which Allows manupulation of xml related function
+import sys
 from colorama import Fore#Module which allows to change color of the text on terminal
 
 
@@ -33,15 +34,21 @@ def main(args):
         ext =  file[len(file)-1]#get user ext for the file
         if ext in supportedExt:
           logs = localizations(args.file,args,"UTF-8")
-          if args.input_type=="sql":
+          if args.input_type=="sql" and ext=="sql":
                handleSqlFile(args,logs)#handles the sql file
                
-          elif args.input_type=="txt":
+          elif args.input_type=="txt" and ext=="txt":
                handleTextFile(logs,args)
+          else:
+               print(Fore.RED,"make sure the the file extension and the -it flag match".capitalize())
+               print(Fore.WHITE)
+               sys.exit(1)
+              
+               
           aggrigationMode(args)
         else:
              print(Fore.RED,"PLEASE ENTER TXT or SQL extension")
-             print(Fore.WHITE,"")
+             print(Fore.WHITE)
           
      
 
@@ -55,10 +62,16 @@ argParser.add_argument("-a","--all",help="""reads the whole file
                        (**NOTE**),make sure -sl and -nl are not specified otherwise it wont work!"""
                        ,action="store_true")
 argParser.add_argument("-it","--input_type",help="Input Type File",default="txt",nargs="?",choices=["txt","sql"])
-argParser.add_argument("-t","--type",help="output type formate for logs",default="json" ,nargs="?",choices=["xml","json","csv","html"])
+argParser.add_argument("-o","--output",help="output type formate for logs",default="json" ,nargs="?",choices=["xml","json","csv","html"])
 argParser.add_argument("-am","--aggrigation_mode",help="Enters aggrigation mode for the genneration data for the lines your choose, so that you anaylis the data in mode detail",type=bool,default=False)
-args =  argParser.parse_args()
-try:
-     main(args)#main function which calls all other functions
-except KeyboardInterrupt as e:#ctrl-c handled
-     handleErrors(e)
+
+if __name__=="__main__":
+     try:
+          if len(sys.argv)<=1:
+               print(Fore.BLUE)
+               argParser.print_help()
+          else: 
+               args =  argParser.parse_args()
+               main(args)#main function which calls all other functions
+     except KeyboardInterrupt as e:#ctrl-c handled
+          handleErrors(e)

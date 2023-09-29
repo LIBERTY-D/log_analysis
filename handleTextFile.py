@@ -169,20 +169,20 @@ def handleTextFile(logs,args):
      try:
           workable = list(filter(remove,enumerate(main))) 
           # workable.pop(len(workable)-1)#remove last item which always appesrs to be empty
-          if args.type == "json":
+          if args.output == "json":
                jsonObject = handleTxtJson(workable)#function which return  json data
                print(Fore.BLUE+jsonObject)
                time.sleep(2.4)
                print("WRITING TO FILE.........")
                writeJsonFile("results.json",jsonObject)
                print("DONE....")
-          elif args.type=="xml":
+          elif args.output=="xml":
                handlesTxtXml(workable)#write logs to xml file function
                if len(workable)>0:
                     readXmlData("results.xml")#read xml data produced
-          elif args.type=="html":
+          elif args.output=="html":
                handleHtmlText(workable)
-          elif args.type=="csv":
+          elif args.output=="csv":
                handleCSVText(workable)
      except Exception  as e:
           handleErrors(e)

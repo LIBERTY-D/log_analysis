@@ -55,21 +55,21 @@ def handleSqlFile(args,logs):
                         init[key]=value
                     myLogs.append(init)#put the dictionary in a list
                     init ={}
-    if args.type=="json":
+    if args.output=="json":
         jsonlogs =handleSqlJson(myLogs)
         print(Fore.BLUE,jsonlogs)
         time.sleep(2.4)
         print("WRITING TO FILE.........")
         print("DONE....")
         writeJsonFile("results.json",jsonlogs)
-    elif args.type=="xml":
+    elif args.output=="xml":
         handleSqlXml(myLogs)
         readXmlData("results.xml") 
-    elif args.type=="html":
+    elif args.output=="html":
         print(Fore.BLUE,"WRITING TO HTML FILE(results.html)...")
         handleHtmlSql(myLogs)
         print(Fore.BLUE,"DONE..(CHECK results.html)")
-    elif args.type =="csv":
+    elif args.output =="csv":
         print(Fore.BLUE,"WRITING TO CSV FILE(results.csv)...")
         handleCSVSql(myLogs)
         print(Fore.BLUE,"DONE..(CHECK results.csv)")
