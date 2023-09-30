@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Log Analysis Tool: User Manual</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+  } 
+
+  pre {
+    background-color: #f9f9f9;
+    padding: 10px;
+    border: 1px solid #ccc;
+    overflow: auto;
+  }
+  header {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 1em 0;
+  }
+  h1 {
+    margin: 0;
+  }
+  nav {
+    background-color: #444;
+    color: #fff;
+    padding: 0.5em;
+    text-align: center;
+  }
+  nav a {
+    color: #fff;
+    text-decoration: none;
+    margin: 0 1em;
+  }
+  nav a:hover {
+    text-decoration: underline;
+  }
+  .container {
+    max-width: 800px;
+    margin: 2em auto;
+    padding: 2em;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  h2 {
+    margin-top: 0;
+    color: #333;
+  }
+  p {
+    line-height: 1.6;
+  }
+  .back-to-top {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #444;
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    opacity: 0.7;
+    transition: opacity 0.3s;
+  }
+  .back-to-top:hover {
+    opacity: 1;
+  }
+</style>
+</head>
+<body>
+  <header>
+    <h1>Log Analysis Tool: User Manual</h1>
+  </header>
+  <nav>
+    <a href="#introduction">Introduction</a>
+    <a href="#installation-and-setup">Installation and Setup</a>
+    <a href="#working-with-the-tool">Working with the Tool</a>
+    <a href="#usage">Usage</a>
+    <a href="#Aggregation Mode and Filtering">Aggregation Mode and Filtering</a>
+    <a href="#troubleshooting-and-error-handling">Troubleshooting</a>
+    <a href="#conclusion">Conclusion</a>
+  </nav>
+  <div class="container">
+    <section id="introduction">
+      <h2>Introduction</h2>
+      <p>The Log Analysis Tool is a powerful utility designed to assist you in understanding and extracting insights from log files. Whether you're a seasoned log analyst or new to log analysis, this tool provides a comprehensive solution for unraveling the information hidden within your log data.</p>
+    </section>
+    <section id="installation-and-setup">
+      <h2>Installation and Setup</h2>
+      <p>To get started with the Log Analysis Tool:</p>
+      <ol>
+        <li>Ensure you have Python installed on your system.</li>
+        <li>Download the <code>main.py</code> script by following the these instructions here <a href="get_log.html" target="_blank" rel="noopener noreferrer">here</a></li>
+        <li>Navigate to the script's directory using the terminal(Analyze).</li>
+        <li>Run <code>pip install pipreqs</code></li>
+        <li>Then run <code>"pipreqs ."</code>,this will produce a requirements.txt </li>
+        <li>Finally to install all required modules for the script to run. Use the follwing command <code>pip install -r requirements.txt</code></li>
+        <li>Run the script using the command <code>python main.py options</code>.</li>
+      </ol>
+    </section>
+    <section id="working-with-the-tool">
+      <h2>Working with the Tool</h2>
+      <p>The Log Analysis Tool offers a range of functionalities to assist you in analyzing log files:</p>
+      <h3>Understanding Command Line Arguments</h3>
+      <p>Command line arguments allow you to customize the tool's behavior:</p>
+      <ul>
+        <li><code>-h</code> or <code>--help</code>: For help of command line arguments and descriptions.</li>
+        <li><code>-f</code> or <code>--file</code>: Specify the path to the log file or URL (required).</li>
+        <li><code>-sl</code> or <code>--startline</code>: Start reading from a specific line number.</li>
+        <li><code>-el</code> or <code>--endline</code>: End reading at a designated line number.</li>
+        <li><code>-nl</code> or <code>--numberline</code>: Read a specific number of lines from the start.</li>
+        <li><code>-a</code> or <code>--all</code>: Read the entire file.</li>
+        <li><code>-it</code> or <code>--input_type</code>: Choose the input file type (default is "txt").</li>
+        <li><code>-o</code> or <code>--output</code>: Select the output format (default is "json").</li>
+        <li><code>-am</code> or <code>--aggrigation_mode</code>: Activate aggregation mode (requires a boolean value).</li>
+      </ul>
+      <h3>Harnessing Aggregation Mode</h3>
+      <p>Aggregation mode enhances your data exploration by allowing you to filter logs based on specific fields and values. This feature transforms raw data into actionable insights, facilitating comprehensive analysis.</p>
+    </section>
+    <section id="usage">
+      <h2>Usage</h2>
+      <p>The Log Analysis Tool provides a flexible command-line interface for analyzing log files. Here's how you can use the tool:</p>
+      <h3>Basic Usage</h3>
+      <p>For help on command line arguments</p>
+       <pre>
+        <code>
+          python main.py -h
+        </code>
+      </pre>
+      <pre>
+        <code>
+          python main.py -f /path/to/log/file.txt -a
+        </code>
+      </pre>
+      <p>The above command reads the specified log file and provides a default JSON output of the analysis and default input type of the file is txt.</p>
+      <pre>
+        <code>
+          python main.py -f https://example.com/logs.log -sl 10 -el 50 -o xml
+        </code>
+      </pre>
+      <p>The above command reads the specified log file from the browser and provides a XML output of the analysis and default input type of the file is txt and if you need to put a sql file provide the -it flag with a value of sql.</p>
+      <pre>
+        <code>
+           python main.py -f logs.txt -a -am True
+        </code>
+      </pre>
+       <p>The above command reads the specified log file-the -a(all) flag reads entire file and enters aggregation mode fore filtering according to key value e.g </p>
+       <code> Enter field to search: TaskId 123</code>
+       
+       <pre>
+        <code>
+          python main.py -f logs.txt -sl 10 -nl 30 -am True
+        </code>
+      </pre>
+      <p>You might have guessed that the above command reads the file starting from line 10 and reads 30 lines from line 10,and Of course aggregation mode is entered as you can see.</p>
+     
+ 
+      <h3>Customizing Output Format</h3>
+      <p>You can customize the output format using the <code>-o</code> or <code>--output</code> option. Available formats are "json", "xml", "csv", and "html".</p>
+      <pre>
+        <code>
+          python main.py -f /path/to/log/file.txt -it txt -sl 10 -el 45 -o xml
+        </code>
+      </pre>
+      <p>This command generates an XML output of the log analysis for input type  file text, starting from line 10 and ending line 45.</p>
+    </section>
+    <section id="Aggregation Mode and Filtering">
+    <h3>Aggregation Mode and Filtering</h3>
+    <p>The <code>-am</code> or <code>--aggrigation_mode</code> option enables aggregation mode, allowing you to perform more detailed analysis on the generated log data. You can also apply filtering to focus on specific results.</p>
+    <p>PLEASE TAKE NOT AGRGREGATION MODE IS FOR JSON OUTPUT ONLY!</p>
+    <p>For example, to enter aggregation mode and filter results based on the "System" field, use the following command:</p>
+    <pre>
+      <code>
+        python main.py -f /path/to/log/file.txt -it txt -sl 1 -el 30  -am True
+      </code>
+    </pre>
+    <p>After entering aggregation mode, the tool will prompt you to enter a filter field and value. If you want to filter logs where the "System" field is "ERP XL", you can type:</p>
+    <pre>
+      <code>
+        System "ERP XL"
+      </code>
+    </pre>
+    <p>The tool will then display filtered results based on your input.</p>
+    <p>TO EXIT AGRGREGATION MODE enter <code>exit()</code></p>
+    <!-- <h3>Filtering Using Key-Value Pairs</h3>
+    <p>You can also use key-value pairs for more advanced filtering. For example, to filter logs where the "Level" is "Error" and the "System" is "CORE", enter:</p>
+    <pre>
+      <code>
+        Level "Error" System "CORE"
+      </code>
+    </pre> -->
+    <!-- <p>This will provide results that match both conditions.</p> -->
+    <p>Note that filtering is available for both text file and SQL input types in aggregation mode.</p>
+    <a class="back-to-top" href="#">Back to Top</a>
+  </section>
+
+    <section id="troubleshooting-and-error-handling">
+      <h2>Troubleshooting and Error Handling</h2>
+      <p>The Log Analysis Tool features robust error handling to ensure a seamless user experience. In case of any issues, the tool provides informative error messages to help you identify and resolve problems.</p>
+    </section>
+    <section id="conclusion">
+      <h2>Conclusion</h2>
+      <p>Congratulations! You are now well-equipped to use the Log Analysis Tool effectively. Whether you're troubleshooting issues or optimizing system performance, this tool is your ally. As you delve into log analysis, remember that the journey is as rewarding as the insights you uncover.</p>
+      <!-- <a class="back-to-top" href="#">Back to Top</a> -->
+    </section>
+  </div>
+
+  <script>
+    const backToTopButton = document.querySelector('.back-to-top');
+    backToTopButton.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+</body>
+</html>

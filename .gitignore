@@ -5,15 +5,9 @@ results.json
 results.csv
 results.html
 installation.html
-docs/_build/doctrees
-docs/_static
-docs/_templates
-docs/*.rst
-docs/*.bat
-docs/Makefile
-docs/*.py
-docs/_build/html/*
-!userdoc.html
+
+
+
 
 
 

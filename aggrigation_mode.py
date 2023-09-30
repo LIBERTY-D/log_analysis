@@ -14,7 +14,7 @@ def aggrigationMode(args):
     Deals with aggrigation retated function for sql and txt json output logs
     """
     time.sleep(2.4)
-    if(args.aggrigation_mode and args.input_type=="txt" and args.type=="json"):
+    if(args.aggrigation_mode and args.input_type=="txt" and args.output=="json"):
         try:
              print("""The appropriate field to search is the one produced in results.json file.
                    Usage:
@@ -33,7 +33,7 @@ def aggrigationMode(args):
             print("unknown error")
             print(e.args)
             sys.exit(0)
-    elif(args.aggrigation_mode and args.input_type=="sql" and args.type=="json"):
+    elif(args.aggrigation_mode and args.input_type=="sql" and args.output=="json"):
         try:
              print("""The appropriate field to search is the one produced in results.json file.
                    Usage:
@@ -52,7 +52,7 @@ def aggrigationMode(args):
             print("unknown errorrr")
             print(e)
             sys.exit(0)
-    elif(args.aggrigation_mode and args.type=="xml"):
+    elif(args.aggrigation_mode and args.output=="xml"):
          try:
               raise Mode("xml")
          except Mode as e:
@@ -134,6 +134,7 @@ def  promptSql():
           pass
      if len(data)>0:
           while exitText!="exit()":
+               
                user = input(Fore.WHITE+"Enter Field and value for filter: ")
                exitText=user
                inputs =  user.split(" ")#seperate input by space
@@ -143,10 +144,10 @@ def  promptSql():
                     if  user_field in fields:
                          myFilter = list(filter(sqlFilter,data))
                          print(Fore.CYAN,"YOUR FILTERED RESULTS")
-                         data = {"results":len(myFilter),
+                         filteredData = {"results":len(myFilter),
                               "data":myFilter
                          }
-                         print(Fore.BLUE+json.dumps(data,indent=4,ensure_ascii=False))
+                         print(Fore.BLUE+json.dumps(filteredData,indent=4,ensure_ascii=False))
                     else:
                          print(Fore.RED,"NO SUCH FIELD EXIST")
      else:
